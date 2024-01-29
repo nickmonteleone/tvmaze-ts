@@ -1,5 +1,6 @@
 import $ from 'jquery';
-import { getEpisodesOfShow, searchShowsByTerm } from "./model.ts";
+import { getEpisodesOfShow, searchShowsByTerm, IShow } from "./model.ts";
+
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
@@ -8,7 +9,7 @@ const $searchForm = $("#searchForm");
 
 /** Given list of shows, create markup for each and to DOM */
 
-function populateShows(shows) {
+function populateShows(shows: IShow[]) {
   $showsList.empty();
   const x = "https://static.tvmaze.com/" +
     "uploads/images/medium_portrait/160/401704.jpg"
@@ -42,8 +43,8 @@ function populateShows(shows) {
  */
 
 async function searchForShowAndDisplay() {
-  const term = $("#searchForm-term").val();
-  const shows = await searchShowsByTerm(term);
+  const term = $("#searchForm-term").val() as string;
+  const shows: IShow[] = await searchShowsByTerm(term);
 
   $episodesArea.hide();
   populateShows(shows);
