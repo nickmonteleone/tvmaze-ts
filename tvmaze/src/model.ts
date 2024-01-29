@@ -1,5 +1,3 @@
-import { I } from "vitest/dist/reporters-1evA5lom.js";
-
 const MISSING_IMAGE_URL = "https://tinyurl.com/missing-tv";
 const TVMAZE_API_URL = "https://api.tvmaze.com/";
 
@@ -8,6 +6,13 @@ interface IShow {
   name: string;
   summary: string;
   image: string;
+}
+
+interface IEpisode {
+  id: number;
+  name: string;
+  season: string;
+  number: number;
 }
 
 /** Given a search term, search for tv shows that match that query.
@@ -27,23 +32,17 @@ async function searchShowsByTerm(term: string): Promise<IShow[]> {
   const searchResults = await response.json();
 
   const shows: IShow[] = searchResults.map((searchResult: Record<string, any>) => {
-    const { id, name, summary } = searchResult.show;
-    const image: string = searchResult.show.image
-      ? searchResult.show.image.medium
-      : MISSING_IMAGE_URL;
-    const filteredData: IShow = { id, name, summary, image };
-
-    return filteredData;
+    const {id, name, summary, image } = searchResult.show;
+    const showResult: IShow = {
+      id,
+      name,
+      summary,
+      image: image ? image.medium : MISSING_IMAGE_URL,
+    };
+    return showResult;
   });
 
   return shows;
-}
-
-interface IEpisode {
-  id: number;
-  name: string;
-  season: string;
-  number: number;
 }
 
 /** Given a show ID, get from API and return (promise) array of episodes:
@@ -76,6 +75,7 @@ export {
   searchShowsByTerm,
   getEpisodesOfShow,
   type IShow,
+  type IEpisode,
   TVMAZE_API_URL,
   MISSING_IMAGE_URL,
 };
