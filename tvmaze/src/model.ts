@@ -1,3 +1,5 @@
+import { I } from "vitest/dist/reporters-1evA5lom.js";
+
 const MISSING_IMAGE_URL = "https://tinyurl.com/missing-tv";
 const TVMAZE_API_URL = "https://api.tvmaze.com/";
 
@@ -24,7 +26,7 @@ async function searchShowsByTerm(term: string): Promise<IShow[]> {
 
   const searchResults = await response.json();
 
-  const shows = searchResults.map((searchResult: Record<string, any>) => {
+  const shows: IShow[] = searchResults.map((searchResult: Record<string, any>) => {
     const { id, name, summary } = searchResult.show;
     const image: string = searchResult.show.image
       ? searchResult.show.image.medium
@@ -35,33 +37,32 @@ async function searchShowsByTerm(term: string): Promise<IShow[]> {
   });
 
   return shows;
-
-  // return [
-  //   {
-  //     id: 1767,
-  //     name: "The Bletchley Circle",
-  //     summary:
-  //       `<p><b>The Bletchley Circle</b> follows the journey of four ordinary
-  //          women with extraordinary skills that helped to end World War II.</p>
-  //        <p>Set in 1952, Susan, Millie, Lucy and Jean have returned to their
-  //          normal lives, modestly setting aside the part they played in
-  //          producing crucial intelligence, which helped the Allies to victory
-  //          and shortened the war. When Susan discovers a hidden code behind an
-  //          unsolved murder she is met by skepticism from the police. She
-  //          quickly realises she can only begin to crack the murders and bring
-  //          the culprit to justice with her former friends.</p>`,
-  //     image:
-  //       "http://static.tvmaze.com/uploads/images/medium_portrait/147/369403.jpg"
-  //   }
-  // ];
 }
 
+interface IEpisode {
+  id: number;
+  name: string;
+  season: string;
+  number: number;
+}
 
 /** Given a show ID, get from API and return (promise) array of episodes:
  *      { id, name, season, number }
  */
 
-async function getEpisodesOfShow(id:number) {
+async function getEpisodesOfShow(id: number): Promise<IEpisode[]> {
+  const response = await fetch(`${TVMAZE_API_URL}/shows/${id}/episodes`);
+  const searchResults = await response.json();
+
+  const episodes: IEpisode[] = searchResults.map((searchResult: Record<string, any>) => {
+    const { id, name, season, number } = searchResult;
+    const filteredData: IEpisode = { id, name, season, number };
+    return filteredData;
+  });
+
+  console.log('Show id:', id);
+  console.log('Episodes found:', episodes);
+  return episodes;
 }
 
 
