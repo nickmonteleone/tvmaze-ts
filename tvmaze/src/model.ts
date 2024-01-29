@@ -11,9 +11,9 @@ interface IShow {
 interface IEpisode {
   id: number;
   name: string;
-  season: string;
+  season: string;   // TODO: double check: is this a number?
   number: number;
-}
+}  // TODO: Move these interfaces to the interfaces file.
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -29,8 +29,12 @@ async function searchShowsByTerm(term: string): Promise<IShow[]> {
   const params = new URLSearchParams({ q: term });
   const response = await fetch(`${TVMAZE_API_URL}search/shows?${params}`);
 
-  const searchResults = await response.json();
+  const searchResults = await response.json();  // TODO: Typing (Another interface?)
 
+  // TODO: string, any is too vague
+  // No need to type what you're not accessing, so you could use an interface
+  // IShowResult -- this is what the API gave us. Allows flexibility for img.
+  // Only thing you need typed is what you're referencing (in your interface).
   const shows: IShow[] = searchResults.map((searchResult: Record<string, any>) => {
     const {id, name, summary, image } = searchResult.show;
     const showResult: IShow = {
@@ -54,15 +58,17 @@ async function getEpisodesOfShow(id: number): Promise<IEpisode[]> {
   const searchResults = await response.json();
   console.log("searchResults:", searchResults);
 
-  // returns an object if not found, so an object returned means not found
+  // returns an object if not found.
+  // TODO: use response.ok instead.
   if (!(searchResults instanceof Array)) {
     throw new Error(`${searchResults.status}: ${searchResults.name}`);
   }
 
+  // TODO: probably replace record with IEpisode in searchResult typing.
   const episodes: IEpisode[] = searchResults.map((searchResult: Record<string, any>) => {
     const { id, name, season, number } = searchResult;
     const filteredData: IEpisode = { id, name, season, number };
-    return filteredData;
+    return filteredData;   // TODO: perhaps redundant to make the variable to return it.
   });
 
   console.log('Show id:', id);
