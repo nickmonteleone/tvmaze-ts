@@ -22,7 +22,7 @@ async function searchShowsByTerm(term: string): Promise<IShow[]> {
   console.log('making request to api to get shows');
   // Make request to TVMaze search shows API.
   const params = new URLSearchParams({ q: term });
-  const response = await fetch(`${TVMAZE_API_URL}/search/shows?${params}`);
+  const response = await fetch(`${TVMAZE_API_URL}search/shows?${params}`);
 
   const searchResults = await response.json();
 
@@ -51,8 +51,14 @@ interface IEpisode {
  */
 
 async function getEpisodesOfShow(id: number): Promise<IEpisode[]> {
-  const response = await fetch(`${TVMAZE_API_URL}/shows/${id}/episodes`);
+  const response = await fetch(`${TVMAZE_API_URL}shows/${id}/episodes`);
   const searchResults = await response.json();
+  console.log("searchResults:", searchResults);
+
+  // returns an object if not found, so an object returned means not found
+  if (!(searchResults instanceof Array)) {
+    throw new Error(`${searchResults.status}: ${searchResults.name}`);
+  }
 
   const episodes: IEpisode[] = searchResults.map((searchResult: Record<string, any>) => {
     const { id, name, season, number } = searchResult;
@@ -69,6 +75,7 @@ async function getEpisodesOfShow(id: number): Promise<IEpisode[]> {
 export {
   searchShowsByTerm,
   getEpisodesOfShow,
+  type IShow,
   TVMAZE_API_URL,
   MISSING_IMAGE_URL,
 };
