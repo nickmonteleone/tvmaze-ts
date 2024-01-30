@@ -14,6 +14,7 @@ interface IBox {
   width: number;
   height: number;
   backgroundColor: string;
+  remove?: Function;
 }
 
 function BoxList() {
@@ -47,3 +48,4 @@ function BoxList() {
 }
 
 export default BoxList;
+export { type IBox };
