@@ -1,19 +1,7 @@
+import { IShowResult, IShow, IEpisode } from "./interfaces";
+
 const MISSING_IMAGE_URL = "https://tinyurl.com/missing-tv";
 const TVMAZE_API_URL = "https://api.tvmaze.com/";
-
-interface IShow {
-  id: number;
-  name: string;
-  summary: string;
-  image: string;
-}
-
-interface IEpisode {
-  id: number;
-  name: string;
-  season: string;   // TODO: double check: is this a number?
-  number: number;
-}  // TODO: Move these interfaces to the interfaces file.
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -23,27 +11,21 @@ interface IEpisode {
  */
 
 async function searchShowsByTerm(term: string): Promise<IShow[]> {
-  // ADD: Remove placeholder & make request to TVMaze search shows API.
   console.log('making request to api to get shows');
   // Make request to TVMaze search shows API.
   const params = new URLSearchParams({ q: term });
   const response = await fetch(`${TVMAZE_API_URL}search/shows?${params}`);
 
-  const searchResults = await response.json();  // TODO: Typing (Another interface?)
+  const searchResults: IShowResult[] = await response.json();
 
-  // TODO: string, any is too vague
-  // No need to type what you're not accessing, so you could use an interface
-  // IShowResult -- this is what the API gave us. Allows flexibility for img.
-  // Only thing you need typed is what you're referencing (in your interface).
-  const shows: IShow[] = searchResults.map((searchResult: Record<string, any>) => {
+  const shows: IShow[] = searchResults.map((searchResult) => {
     const {id, name, summary, image } = searchResult.show;
-    const showResult: IShow = {
+    return {
       id,
       name,
       summary,
-      image: image ? image.medium : MISSING_IMAGE_URL,
+      image: image ? image.medium! : MISSING_IMAGE_URL,
     };
-    return showResult;
   });
 
   return shows;
@@ -55,21 +37,13 @@ async function searchShowsByTerm(term: string): Promise<IShow[]> {
 
 async function getEpisodesOfShow(id: number): Promise<IEpisode[]> {
   const response = await fetch(`${TVMAZE_API_URL}shows/${id}/episodes`);
-  const searchResults = await response.json();
-  console.log("searchResults:", searchResults);
 
-  // returns an object if not found.
-  // TODO: use response.ok instead.
-  if (!(searchResults instanceof Array)) {
-    throw new Error(`${searchResults.status}: ${searchResults.name}`);
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(`${error.status}: ${error.name}`);
   }
 
-  // TODO: probably replace record with IEpisode in searchResult typing.
-  const episodes: IEpisode[] = searchResults.map((searchResult: Record<string, any>) => {
-    const { id, name, season, number } = searchResult;
-    const filteredData: IEpisode = { id, name, season, number };
-    return filteredData;   // TODO: perhaps redundant to make the variable to return it.
-  });
+  const episodes: IEpisode[] = await response.json();
 
   console.log('Show id:', id);
   console.log('Episodes found:', episodes);
@@ -80,8 +54,6 @@ async function getEpisodesOfShow(id: number): Promise<IEpisode[]> {
 export {
   searchShowsByTerm,
   getEpisodesOfShow,
-  type IShow,
-  type IEpisode,
   TVMAZE_API_URL,
   MISSING_IMAGE_URL,
 };

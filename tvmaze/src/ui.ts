@@ -1,13 +1,13 @@
 import $ from 'jquery';
-import { getEpisodesOfShow, searchShowsByTerm, IShow, IEpisode } from "./model.ts";
+import { getEpisodesOfShow, searchShowsByTerm } from "./model.ts";
+import { IShow, IEpisode } from "./interfaces";
 
 
 // get html elements with jquery
-// const $showsList: JQuery<HTMLElement> = $("#showsList");   // Type?
-const $showsList = $("#showsList");   // Type? Another low-risk situation like on line ~22
-const $episodesList: JQuery<HTMLElement> = $("#episodesList");
-const $episodesArea: JQuery<HTMLElement> = $("#episodesArea");
-const $searchForm: JQuery<HTMLElement> = $("#searchForm");
+const $showsList = $("#showsList");
+const $episodesList = $("#episodesList");
+const $episodesArea = $("#episodesArea");
+const $searchForm = $("#searchForm");
 
 /** Given list of shows, create markup for each and to DOM
  *
@@ -16,11 +16,8 @@ const $searchForm: JQuery<HTMLElement> = $("#searchForm");
 
 function populateShows(shows: IShow[]): void {
   $showsList.empty();
-  // const x = "https://static.tvmaze.com/" +           // TODO: no.
-  //   "uploads/images/medium_portrait/160/401704.jpg";
-  for (let show of shows) {
-    const $show: JQuery<HTMLElement> = $(     // TODO: Overkill to type this? A: good to practice. fn sig, args, return.
-    // This is a low-risk var. Nobody will mistake this.
+  for (const show of shows) {
+    const $show = $(
       `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
            <img
@@ -48,9 +45,8 @@ function populateShows(shows: IShow[]): void {
  */
 
 async function searchForShowAndDisplay(): Promise<void> {
-  // const term = $("#searchForm-term").val() as string;   // TODO: as string okay? perhaps bias toward as string since someone else's method can return multiple things
-  const term: string = $("#searchForm-term").val();   // TODO: as string okay? perhaps bias toward as string since someone else's method can return multiple things
-  const shows: IShow[] = await searchShowsByTerm(term);
+  const term = $("#searchForm-term").val() as string;
+  const shows = await searchShowsByTerm(term);
 
   $episodesArea.hide();
   populateShows(shows);
@@ -71,7 +67,7 @@ function populateEpisodes(episodes: IEpisode[]) {
   $episodesList.empty();
 
   for (const episode of episodes) {
-    const $episode: JQuery<HTMLElement> = $(
+    const $episode = $(
       `<li>
          ${episode.name}
          (season ${episode.season}, episode ${episode.number})
@@ -83,17 +79,11 @@ function populateEpisodes(episodes: IEpisode[]) {
   }
 }
 
-/** Handle click to show episodes for a show */
-
-async function retrieveEpisodesAndDisplay(showId: number): Promise<void> {
-  const episodes: IEpisode[] = await getEpisodesOfShow(showId);  // TODO: could be in click handler
-  populateEpisodes(episodes);
-}
-
 $showsList.on("click", ".Show-getEpisodes",
   async function (evt: JQuery.ClickEvent): Promise<void> {
-    const showId: number = Number(   // TODO: Again, probably overkill to type
+    const showId = Number(
       $(evt.target).closest(".Show").data("show-id")
     );
-    await retrieveEpisodesAndDisplay(showId);
+    const episodes = await getEpisodesOfShow(showId);
+    populateEpisodes(episodes);
   });
