@@ -1,21 +1,17 @@
-import React, { useState } from "react";
-import Box from "./Box";
+import { useState } from "react";
+import Box, { IBox } from "./Box";
 import NewBoxForm from "./NewBoxForm";
 
 /** Manage list of boxes
  *
+ * Props:
+ * - None
+ *
  * State:
  * - boxes: [ { id, width, height, backgroundColor }, ... ]
+ *
+ * App -> BoxList -> Box
  */
-
-
-interface IBox {
-  id: string;
-  width: number;
-  height: number;
-  backgroundColor: string;
-  remove?: Function;
-}
 
 function BoxList() {
   const [boxes, setBoxes] = useState<IBox[]>([])
@@ -48,4 +44,3 @@ function BoxList() {
 }
 
 export default BoxList;
-export { type IBox };

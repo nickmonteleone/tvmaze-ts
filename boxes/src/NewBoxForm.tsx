@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { v4 as uuid } from 'uuid';
 
+const INITIAL_DATA: IBoxForm = {height: "5", width: "5", backgroundColor: ""};
+
 /** Form for adding box.
  *
  * Props:
@@ -20,12 +22,11 @@ interface IBoxForm {
 
 interface INewBoxFormProps {
   createBox: Function;
+  initialData?: IBoxForm;
 }
 
-const INITIAL_DATA: IBoxForm = {height: "5", width: "5", backgroundColor: ""};
-
-function NewBoxForm({ createBox }: INewBoxFormProps) {
-  const [formData, setFormData] = useState<IBoxForm>(INITIAL_DATA);
+function NewBoxForm({ createBox, initialData = INITIAL_DATA }: INewBoxFormProps) {
+  const [formData, setFormData] = useState<IBoxForm>(initialData);
 
   /** Update form input. */
   function handleChange(evt: React.ChangeEvent<HTMLInputElement>): void {

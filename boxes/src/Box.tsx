@@ -1,5 +1,3 @@
-import { IBox } from './BoxList';
-
 /** Colored box presentation
  *
  * Props:
@@ -9,14 +7,27 @@ import { IBox } from './BoxList';
  * - backgroundColor
  * - remove (function to call)
  *
+ * States:
+ * - None
+ *
  * BoxList -> Box
  */
+
+interface IBox {
+  id: string;
+  width: number;
+  height: number;
+  backgroundColor: string;
+  remove?: Function;
+}
 
 function Box({ id, width = 5, height = 5, backgroundColor, remove }: IBox) {
 
   /** Remove a box. */
-  function handleRemove() {
-    remove(id);
+  function handleRemove(): void {
+    if (remove) {
+      remove(id);
+    }
   }
 
   return (
@@ -38,3 +49,4 @@ function Box({ id, width = 5, height = 5, backgroundColor, remove }: IBox) {
 }
 
 export default Box;
+export { type IBox };

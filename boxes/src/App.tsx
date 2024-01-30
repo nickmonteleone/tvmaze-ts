@@ -3,10 +3,10 @@ import BoxList from "./BoxList";
 /** App for color boxes
  *
  * Props:
- * -None
+ * - None
  *
  * States:
- * -None
+ * - None
  *
  * App -> BoxList
  */
