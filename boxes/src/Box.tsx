@@ -18,16 +18,14 @@ interface IBox {
   width: number;
   height: number;
   backgroundColor: string;
-  remove?: Function;
+  remove: Function;
 }
 
 function Box({ id, width = 5, height = 5, backgroundColor, remove }: IBox) {
 
   /** Remove a box. */
   function handleRemove(): void {
-    if (remove) {
-      remove(id);
-    }
+    remove(id);
   }
 
   return (
@@ -49,4 +47,3 @@ function Box({ id, width = 5, height = 5, backgroundColor, remove }: IBox) {
 }
 
 export default Box;
-export { type IBox };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Box, { IBox } from "./Box";
+import Box from "./Box";
 import NewBoxForm from "./NewBoxForm";
 
 /** Manage list of boxes
@@ -12,6 +12,13 @@ import NewBoxForm from "./NewBoxForm";
  *
  * App -> BoxList -> Box
  */
+
+interface IBox {
+  id: string;
+  width: number;
+  height: number;
+  backgroundColor: string;
+}
 
 function BoxList() {
   const [boxes, setBoxes] = useState<IBox[]>([])
